@@ -1,0 +1,138 @@
+{
+  "checks": [
+    {
+      "elapsed_seconds": 0.014876578992698342,
+      "evidence": {
+        "max_model_len": 65536,
+        "model": "glm53-flash-exl3-k2"
+      },
+      "name": "model_identity",
+      "passed": true
+    },
+    {
+      "elapsed_seconds": 0.4142293219920248,
+      "evidence": {
+        "output": "pong"
+      },
+      "name": "tiny_exact",
+      "passed": true,
+      "request_sha256": "42b1c3bb96f66027cd243a92b19c631574bd878bdb7854ee83c64507711799ff"
+    },
+    {
+      "elapsed_seconds": 3.6978270540130325,
+      "evidence": {
+        "completion_tokens": 32,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "prompt_tokens": 620,
+        "prompt_tokens_details": null,
+        "total_tokens": 652
+      },
+      "name": "prefill_roughly_512_1",
+      "passed": true,
+      "request_sha256": "27bdf22ca3fd32e2a05c12ec14501206063dc54779fe4eab743d983b47eb7445"
+    },
+    {
+      "elapsed_seconds": 10.611565630999394,
+      "evidence": {
+        "completion_tokens": 32,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "prompt_tokens": 1219,
+        "prompt_tokens_details": null,
+        "total_tokens": 1251
+      },
+      "name": "prefill_roughly_512_2",
+      "passed": true,
+      "request_sha256": "50b3efa8feafbebb330887b32aa7a12333e1412a6f59a0374c0945053a6c15fe"
+    },
+    {
+      "elapsed_seconds": 14.253753472992685,
+      "evidence": {
+        "finish": "length",
+        "usage": {
+          "completion_tokens": 256,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "prompt_tokens": 1214,
+          "prompt_tokens_details": null,
+          "total_tokens": 1470
+        }
+      },
+      "name": "prefill_1k_output_256",
+      "passed": true,
+      "request_sha256": "91cc22d291c1046ac3ed873ba4222f7207bf1931e272c55f49421bae1b402efe"
+    },
+    {
+      "elapsed_seconds": 7.4738200579886325,
+      "evidence": {
+        "arguments": {
+          "sku": "GX10"
+        },
+        "name": "lookup_inventory"
+      },
+      "name": "tool_call",
+      "passed": true,
+      "request_sha256": "321fe53e3f338ec6c4a097fb7638f786cb71a4db4e37ff24b31796a657bd3c36"
+    },
+    {
+      "elapsed_seconds": 8.008772548986599,
+      "evidence": {
+        "answer": "42",
+        "reasoning_tokens": 121
+      },
+      "name": "thinking_mode",
+      "passed": true,
+      "request_sha256": "9c2c6322c85ac9deedd19374ffe8a0f4204f8ba0d352dc920dc32f3ca93ac494"
+    },
+    {
+      "elapsed_seconds": 8.461204923980404,
+      "evidence": {
+        "input": "generated solid-red PNG",
+        "output": "red"
+      },
+      "name": "vision_synthetic",
+      "passed": true,
+      "request_sha256": "d039d024dec41f46fddb995f667dde71ebc54b472e1cefc68c4759fb100966d4"
+    },
+    {
+      "elapsed_seconds": 8.128322916978505,
+      "evidence": {
+        "exact_match": true,
+        "input": "realistic interface screenshot"
+      },
+      "name": "vision_realistic_screenshot",
+      "passed": true,
+      "request_sha256": "509a7a948e53c0d5fb97e8d326832e9f5b90b610384a06d6febcda02597432b3"
+    }
+  ],
+  "design": {
+    "checks": 9,
+    "native_vision_checks": 2,
+    "thinking_modes": 2,
+    "tool_call_checks": 1
+  },
+  "evidence_label": "tested",
+  "model": {
+    "context_tokens": 65536,
+    "served_name": "glm53-flash-exl3-k2",
+    "system_fingerprint": "vllm-0.1.dev62+g878631b60.d20260830-cadb8d5d"
+  },
+  "safety": {
+    "breach": null,
+    "maximum_host_swap_growth_bytes": 0,
+    "maximum_service_swap_bytes": 0,
+    "minimum_mem_available_bytes": 8654995456
+  },
+  "schema_version": 1,
+  "status": "passed",
+  "summary": {
+    "native_vision_passed": 2,
+    "native_vision_total": 2,
+    "passed": 9,
+    "total": 9
+  }
+}

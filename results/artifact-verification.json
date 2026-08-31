@@ -1,0 +1,14 @@
+{
+  "all_sha256_verified": true,
+  "evidence_label": "verified",
+  "manifest": "manifests/glm53-exl3-k2.json",
+  "repository": "vcruz305/GLM-5.3-Flash-EXL3-K2",
+  "requested_revision": "ca0bcdae265f7df1e346c57a2b53b8b8f632ee0b",
+  "resolved_revision": "ca0bcdae265f7df1e346c57a2b53b8b8f632ee0b",
+  "schema_version": 1,
+  "status": "passed",
+  "weight_bytes_total": 97728721536,
+  "weight_bytes_verified": 97728721536,
+  "weight_shards_total": 120,
+  "weight_shards_verified": 120
+}

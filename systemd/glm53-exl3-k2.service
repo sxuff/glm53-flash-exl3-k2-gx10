@@ -1,0 +1,20 @@
+[Unit]
+Description=GLM-5.3-Flash EXL3 K2 on one GB10
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=-%h/.config/glm53-exl3-k2/server.env
+ExecStart=%h/.local/bin/run-glm53-exl3-k2.sh
+Restart=no
+TimeoutStartSec=1500
+TimeoutStopSec=120
+KillSignal=SIGTERM
+MemoryHigh=108G
+MemoryMax=112G
+MemorySwapMax=0
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=default.target

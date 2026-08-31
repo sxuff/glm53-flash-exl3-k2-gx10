@@ -1,0 +1,135 @@
+{
+  "aggregate": {
+    "completion_tokens": 1600,
+    "mtp_acceptance_rate": 0.6611030478955007,
+    "mtp_accepted_tokens": 911.0,
+    "mtp_proposed_tokens": 1378.0,
+    "mtp_verified_tokens_per_step": 2.3222060957910013,
+    "server_decode_seconds": 100.24329069501255,
+    "server_decode_tokens_per_second": 15.961167963529409
+  },
+  "capabilities": {
+    "extra_model_required": false,
+    "native_vision": true,
+    "native_vision_passed": 2,
+    "native_vision_total": 2,
+    "tool_call_passed": true
+  },
+  "cases": [
+    {
+      "case": "prose",
+      "finish_reason": "length",
+      "mtp_acceptance_rate": 0.4639423076923077,
+      "mtp_accepted_tokens": 193.0,
+      "mtp_draft_steps": 208.0,
+      "mtp_proposed_tokens": 416.0,
+      "mtp_verified_tokens_per_step": 1.9278846153846154,
+      "output_sha256": "cc2f7cc1bcf34b2ea8ac8f438aeffad93ea9cdb93211b094f781de87db198057",
+      "output_tokens": 400,
+      "request_sha256": "4fc7990aa5b7cb1ae581908ae20227248fc98fe53811cae46c03eca69e125892",
+      "server_decode_seconds": 30.21987748995889,
+      "server_decode_tokens_per_second": 13.236321031840959,
+      "server_generation_tokens": 400.0,
+      "ttft_seconds": 0.4037298089824617,
+      "wall_seconds": 30.62371459498536
+    },
+    {
+      "case": "structured",
+      "finish_reason": "length",
+      "mtp_acceptance_rate": 0.9705882352941176,
+      "mtp_accepted_tokens": 264.0,
+      "mtp_draft_steps": 136.0,
+      "mtp_proposed_tokens": 272.0,
+      "mtp_verified_tokens_per_step": 2.9411764705882355,
+      "output_sha256": "0436adfad85df21cc0d591e5d2d3ab0092539d2a0e3de326b3944c66bfa6193a",
+      "output_tokens": 400,
+      "request_sha256": "997487e3b568618208f963620d2213fd035fbfca81e5fc52dd263667df747055",
+      "server_decode_seconds": 19.74468354799319,
+      "server_decode_tokens_per_second": 20.25861792252706,
+      "server_generation_tokens": 400.0,
+      "ttft_seconds": 0.4711257300223224,
+      "wall_seconds": 20.216347500041593
+    },
+    {
+      "case": "code",
+      "finish_reason": "length",
+      "mtp_acceptance_rate": 0.7239263803680982,
+      "mtp_accepted_tokens": 236.0,
+      "mtp_draft_steps": 163.0,
+      "mtp_proposed_tokens": 326.0,
+      "mtp_verified_tokens_per_step": 2.4478527607361964,
+      "output_sha256": "34bb6865b132a77e9abfc220fbfa6ed4bf6280bdfd01d38ddf13af785bdb96e0",
+      "output_tokens": 400,
+      "request_sha256": "f997059aebd06bb041ea08a063adae1d7b609c744d22f6809c18b08ac2c7d88e",
+      "server_decode_seconds": 23.585168732039165,
+      "server_decode_tokens_per_second": 16.959810826225798,
+      "server_generation_tokens": 400.0,
+      "ttft_seconds": 0.5838390109711327,
+      "wall_seconds": 24.169026080984622
+    },
+    {
+      "case": "math",
+      "finish_reason": "length",
+      "mtp_acceptance_rate": 0.5989010989010989,
+      "mtp_accepted_tokens": 218.0,
+      "mtp_draft_steps": 182.0,
+      "mtp_proposed_tokens": 364.0,
+      "mtp_verified_tokens_per_step": 2.197802197802198,
+      "output_sha256": "918dbc48a5d3f27f73ec17ae59306079338fc12de057cb64f32658cc078558d4",
+      "output_tokens": 400,
+      "request_sha256": "7982cfd5778bbf9b6220f0dd6daa2b340394f7f121016bdb60c0e2fa8ea2f4ea",
+      "server_decode_seconds": 26.693560925021302,
+      "server_decode_tokens_per_second": 14.984887221436935,
+      "server_generation_tokens": 400.0,
+      "ttft_seconds": 0.5277763520134613,
+      "wall_seconds": 27.221737371990457
+    }
+  ],
+  "design": {
+    "cases": [
+      "prose",
+      "structured",
+      "code",
+      "math"
+    ],
+    "completion_tokens_per_request": 400,
+    "context_tokens": 65536,
+    "max_num_seqs": 1,
+    "measured_cases": 4,
+    "measured_runs_per_case": 1,
+    "metric": "server generation tokens / server request decode seconds",
+    "repetitions": 1,
+    "seed": 42,
+    "speculation": "native MTP k=2",
+    "temperature": 0.0,
+    "thinking": false,
+    "top_p": 1.0,
+    "warmups_per_case": 1
+  },
+  "evidence_label": "tested",
+  "model": {
+    "quantization": {
+      "bits": 2,
+      "codebook": "mcg",
+      "method": "exl3",
+      "scope": "routed experts; attention/shared experts/embeddings/lm_head/vision remain native BF16"
+    },
+    "repository": "vcruz305/GLM-5.3-Flash-EXL3-K2",
+    "revision": "ca0bcdae265f7df1e346c57a2b53b8b8f632ee0b",
+    "served_name": "glm53-flash-exl3-k2",
+    "weight_bytes": 97728721536,
+    "weight_shards": 120
+  },
+  "runtime": {
+    "version": "0.1.dev62+g878631b60.d20260830"
+  },
+  "safety": {
+    "breach": null,
+    "maximum_host_swap_growth_bytes": 0,
+    "maximum_service_swap_bytes": 0,
+    "minimum_mem_available_bytes": 9771429888
+  },
+  "schema_version": 1,
+  "scope_note": "One four-case operating sweep with one warm-up per case. Not a broad model benchmark.",
+  "status": "passed"
+}
