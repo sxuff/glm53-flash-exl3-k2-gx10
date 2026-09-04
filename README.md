@@ -1,15 +1,107 @@
-# GLM-5.3-Flash EXL3 K2 on one NVIDIA GB10
+# GLM-5.3 Flash on one NVIDIA GB10
 
-A pinned, checksum-verified recipe for serving [`vcruz305/GLM-5.3-Flash-EXL3-K2`](https://huggingface.co/vcruz305/GLM-5.3-Flash-EXL3-K2) on one NVIDIA DGX Spark or ASUS Ascent GX10 with native MTP k=2.
+Two pinned, checksum-verified deployment lanes for running GLM-5.3 Flash on one NVIDIA DGX Spark or ASUS Ascent GX10:
 
-This repository contains deployment scripts, tests, and measured receipts. It does not contain model weights or runtime wheels. It pins and invokes the upstream recipe instead of repackaging that runtime. See [`NOTICE.md`](NOTICE.md).
+1. **Unsloth UD-IQ2_XXS + llama.cpp native MTP n=2**, the new fast and simple GGUF lane.
+2. **EXL3 K2 + vLLM native MTP k=2**, the existing 64K EXL3 lane.
+
+Model weights and runtime binaries are not stored in this repository. Every large artifact and runtime is pulled from an immutable revision and verified before use.
+
+![GLM-5.3 Flash UD-IQ2_XXS native MTP benchmark on one NVIDIA GB10](assets/glm53-mtp-result-card.png)
+
+## New result: llama.cpp native MTP
+
+One fixed-order sweep used four deterministic text workloads per arm, one warm-up followed by one measured 400-token request per workload. Both arms used the same UD-IQ2_XXS artifact, llama.cpp commit, 8K context, Flash Attention, seed, and request settings.
+
+| Mode | Mean server decode rate | Aggregate whole-request rate |
+|---|---:|---:|
+| No MTP | 18.40 tok/s | 18.17 tok/s |
+| Native MTP n=2 | **27.67 tok/s** | **26.56 tok/s** |
+
+- Mean server decode speedup: **1.50x**, or **+50.36%**
+- Aggregate whole-request speedup: **1.46x**
+- MTP draft acceptance across all eight warm-up and measured requests: **70.38%**
+- Minimum host `MemAvailable`: **17.04 GiB no-MTP**, **13.82 GiB MTP**
+- Service swap and host swap growth: **0 bytes in both measured arms**
+
+`Mean server decode rate` is the arithmetic mean of llama.cpp's per-request generation rates. `Aggregate whole-request rate` is 1,600 generated tokens divided by summed request wall time, including prompt processing and first-token latency.
+
+Per-workload values and card copy are in [`gguf/CARD_VALUES.md`](gguf/CARD_VALUES.md). The compact machine receipt is [`gguf/results/summary.json`](gguf/results/summary.json).
+
+## Pick a lane
+
+| Lane | Artifact | Runtime | Exercised context | Measured profile |
+|---|---|---|---:|---|
+| GGUF | Unsloth UD-IQ2_XXS, 95.93 GiB including projector | llama.cpp | 8,192 | Native MTP n=2, 27.67 tok/s mean decode |
+| EXL3 | vcruz305 EXL3 K2, 91.017 GiB | vLLM + ExLlamaV3 | 65,536 | Native MTP k=2, 15.9612 tok/s aggregate decode |
+
+These are separate operational lanes, not a controlled artifact-to-artifact speed comparison. Their quantization, runtime, context allocation, and memory profiles differ.
+
+# Lane A: GGUF + llama.cpp native MTP
+
+## Exact stack
+
+- Hardware: one NVIDIA GB10, 128 GB unified memory, `aarch64`, SM121
+- Target: `unsloth/GLM-5.3-Flash-GGUF`
+- Target revision: `2975ab414d30340466d8c51533c6e91f0cca64c1`
+- Variant: `UD-IQ2_XXS`, four text shards plus BF16 projector
+- Verified artifact: 5 files, 103,008,962,080 bytes, 95.93 GiB
+- Runtime: `unslothai/llama.cpp` at `629b50552801912b3e2078f9799e4d77213197d7`
+- Serving profile: one 8,192-token slot, Flash Attention, full GPU offload, native MTP n=2
+- API: OpenAI-compatible llama.cpp server on `127.0.0.1:8001`
+
+## Download, build, and serve
+
+```bash
+cd gguf
+python3 scripts/download.py \
+  --destination "$HOME/models/GLM-5.3-Flash-UD-IQ2_XXS-2975ab41"
+./scripts/build_runtime.sh
+MODEL_DIR="$HOME/models/GLM-5.3-Flash-UD-IQ2_XXS-2975ab41" \
+./scripts/serve.sh
+```
+
+The launcher defaults to native MTP n=2. Run the control explicitly with:
+
+```bash
+MODE=no-mtp \
+MODEL_DIR="$HOME/models/GLM-5.3-Flash-UD-IQ2_XXS-2975ab41" \
+./scripts/serve.sh
+```
+
+Set `MMPROJ` to the verified projector path when image input is needed. The measured speed arms did not load the projector.
+
+## Reproduce the sweep
+
+Collect one arm per fresh server load:
+
+```bash
+python3 scripts/benchmark.py \
+  --arm no-mtp \
+  --base-url http://127.0.0.1:8001 \
+  --output local/no-mtp.json
+
+python3 scripts/benchmark.py \
+  --arm mtp-n2 \
+  --base-url http://127.0.0.1:8001 \
+  --output local/mtp-n2.json
+
+python3 scripts/analyze.py \
+  --baseline local/no-mtp.json \
+  --treatment local/mtp-n2.json \
+  --output local/summary.json
+```
+
+Full GGUF instructions, pins, metrics, and artifact hashes are in [`gguf/README.md`](gguf/README.md).
+
+# Lane B: EXL3 K2 + vLLM native MTP
 
 ## Verified stack
 
 - Hardware: one NVIDIA GB10, 128 GB unified memory, `aarch64`, SM121
 - Model: `vcruz305/GLM-5.3-Flash-EXL3-K2`
 - Model revision: `ca0bcdae265f7df1e346c57a2b53b8b8f632ee0b`
-- Artifact: 120 safetensors shards, 97,728,721,536 bytes (91.017 GiB), 120/120 SHA-256 verified
+- Artifact: 120 safetensors shards, 97,728,721,536 bytes, 91.017 GiB, 120/120 SHA-256 verified
 - Quantization: EXL3 K2, 2-bit MCG routed experts; attention, shared experts, embeddings, LM head, and vision remain native BF16
 - Upstream recipe: `vcruz305/GLM-5.3-Flash-EXL3-K2-DGX-Spark-recipe` at `0b8dd0d6c7b186076f2e61d1b99a6289f8006c3c`
 - Runtime: vLLM `878631b6079d2cf9fb80830ef9cb41b43aded098`, version `0.1.dev62+g878631b60.d20260830`
@@ -20,62 +112,18 @@ This repository contains deployment scripts, tests, and measured receipts. It do
 
 Stock vLLM cannot load this artifact. The EXL3 quantization method, Glm5Next architecture, sparse-MLA fixes, and fused routed-expert kernel come from the pinned runtime above.
 
-## 1. Preflight the GB10 host
-
-Run on the GB10 host, not inside a management container:
+## Install and run
 
 ```bash
-uname -m
 python3.12 --version
 nvidia-smi
 /usr/local/cuda-13.0/bin/nvcc --version
 free -h
-```
-
-`uname -m` must report `aarch64`. Install Python's matching development headers before runtime installation because Triton or a transitive native dependency may compile a helper:
-
-```bash
-sudo apt-get update
-sudo apt-get install -y git python3.12 python3.12-venv python3.12-dev
-```
-
-Keep at least 6 GiB `MemAvailable`. Stop the owned service if service swap becomes nonzero or whole-host swap grows by more than 512 MiB from the pre-launch baseline.
-
-## 2. Install the pinned runtime
-
-```bash
 bash scripts/bootstrap_runtime.sh
-```
-
-The bootstrap script fetches the exact upstream commit, verifies `FETCH_HEAD`, installs the prebuilt ARM64/CUDA 13 runtime into `~/venvs/glm53-exl3-local`, and runs the upstream preflight. It never installs stock `vllm` from PyPI.
-
-A cold load of the 91 GiB checkpoint takes roughly 11 minutes. Quiet logs during that interval are not evidence of a hang.
-
-## 3. Download and verify the exact artifact
-
-The manifest records every shard's exact byte size and SHA-256.
-
-```bash
 source ~/venvs/glm53-exl3-local/bin/activate
 bash scripts/download_model.sh
-```
-
-Verify an existing model directory without downloading:
-
-```bash
-python3 scripts/verify_model.py \
-  --manifest manifests/glm53-exl3-k2.json \
-  --model-root "$HOME/models/GLM-5.3-Flash-EXL3-K2"
-```
-
-The verifier passes only when all 120 expected shards are present and all 120 content hashes match.
-
-## 4. Install the localhost service
-
-```bash
 bash scripts/install_service.sh
 systemctl --user enable --now glm53-exl3-k2.service
-journalctl --user -u glm53-exl3-k2.service -f
 ```
 
 The installed profile is:
@@ -92,27 +140,21 @@ GPU_MEM_UTIL=0.87
 EXL3_FUSED_MOE=1
 ```
 
-The unit applies:
+The unit applies `MemoryHigh=108G`, `MemoryMax=112G`, and `MemorySwapMax=0`.
 
-```text
-MemoryHigh=108G
-MemoryMax=112G
-MemorySwapMax=0
-```
+A cold load of the 91 GiB checkpoint takes roughly 11 minutes. Quiet logs during that interval are not evidence of a hang.
 
-## 5. Exercise text, tools, and native vision
+## Exercise the service
 
 ```bash
 python3 scripts/smoke.py --base-url http://127.0.0.1:8888
 ```
 
-The retained validation receipt passed 9/9 checks: model identity, exact text, two distinct prefill requests, 1K-input/256-output generation, structured tool calling, thinking mode, a generated image, and a realistic screenshot. Native vision passed 2/2 image checks. See [`results/functional-validation.json`](results/functional-validation.json).
+The retained receipt completed 9/9 checks, including structured tool calling and 2/2 native-image checks. See [`results/functional-validation.json`](results/functional-validation.json).
 
-## Measured native MTP k=2 operating sweep
+## Measured EXL3 MTP k=2 sweep
 
-One four-case sweep on the verified 64K single-slot service. Each case used one warm-up plus one measured request, temperature 0, top-p 1, seed 42, thinking disabled, and exactly 400 generated tokens with `finish_reason: length`.
-
-`Decode tok/s` is server generation tokens divided by the server's request decode time. It excludes prefill and TTFT.
+Each case used one warm-up plus one measured request, temperature 0, top-p 1, seed 42, thinking disabled, and exactly 400 generated tokens.
 
 | Case | Output tokens | Decode tok/s | MTP drafts accepted | Verified tokens/step |
 |---|---:|---:|---:|---:|
@@ -122,38 +164,15 @@ One four-case sweep on the verified 64K single-slot service. Each case used one 
 | Math | 400 | 14.9849 | 59.89% | 2.1978 |
 | **Aggregate** | **1,600** | **15.9612** | **66.11%** | **2.3222** |
 
-Across the measured requests, MTP accepted 911 of 1,378 proposed tokens. Minimum host `MemAvailable` was 9,771,429,888 bytes (9.100 GiB), host swap did not grow, and service swap stayed at 0 bytes.
+Across the measured requests, MTP accepted 911 of 1,378 proposed tokens. Minimum host `MemAvailable` was 9,771,429,888 bytes, host swap did not grow, and service swap stayed at 0 bytes.
 
-This is one bounded operating sweep, not a broad model benchmark. No matched no-spec speedup is claimed. Full denominators, per-request hashes, runtime identity, acceptance counters, timings, and safety telemetry are in [`results/mtp-k2.json`](results/mtp-k2.json).
+No matched no-spec speedup is claimed for the EXL3 lane. Full denominators and timing receipts are in [`results/mtp-k2.json`](results/mtp-k2.json).
 
-Reproduce it against the loaded MTP service:
+## Safety
 
-```bash
-python3 scripts/benchmark_mtp.py \
-  --base-url http://127.0.0.1:8888 \
-  --output results/raw/mtp-k2.json
-```
+For both lanes, keep at least 6 GiB `MemAvailable`. Stop the owned service if service swap becomes nonzero or whole-host swap grows by more than 512 MiB from the pre-launch baseline.
 
-## Artifact and safety receipts
-
-- Artifact: 120/120 shards and 97,728,721,536/97,728,721,536 bytes SHA-256 verified
-- Guarded startup: 661.72 seconds, 0 bytes service swap, 148,135,936 bytes maximum host-swap growth
-- Functional validation: 9/9 checks, including 2/2 native-vision checks
-- Benchmark: 1,600 measured completion tokens, 0 bytes service swap, 0 bytes host-swap growth
-
-Machine-readable summaries:
-
-- [`results/artifact-verification.json`](results/artifact-verification.json)
-- [`results/functional-validation.json`](results/functional-validation.json)
-- [`results/mtp-k2.json`](results/mtp-k2.json)
-
-## Quality boundary
-
-This is an aggressive 2-bit routed-expert quant, not BF16 quality. The upstream recipe reports token-mean KLD 0.3346 and 78.8% top-1 agreement against BF16 on its sealed fidelity corpus. Treat rare long-task derailments as possible and keep public claims scoped to the exact tested artifact and checks.
-
-## Safety and troubleshooting
-
-Inspect the owned service before changing context, memory utilization, sequence count, or speculation depth:
+Inspect before changing context, memory utilization, sequence count, or speculation depth:
 
 ```bash
 systemctl --user status glm53-exl3-k2.service --no-pager
@@ -163,24 +182,10 @@ awk '/MemAvailable|SwapTotal|SwapFree/ {print}' /proc/meminfo
 nvidia-smi
 ```
 
-Common failures:
+## Scope
 
-- `quantization method exl3 is not supported`: stock vLLM was installed. Re-run the pinned bootstrap.
-- `Python.h: No such file or directory`: install `python3.12-dev` or provide matching local headers through `CPATH`.
-- `No valid attention backend ... FLASHINFER_MLA_SPARSE_SM120`: put CUDA 13 `nvcc` and the runtime venv's `ninja` on `PATH`.
-- Model appears idle during startup: allow roughly 11 minutes for the 91 GiB load before diagnosing a hang.
-- Long HTML or source generation appears frozen: inspect request progress and output budget. At roughly 16 tok/s, thousands of output tokens take minutes.
-
-## Cleanup
-
-```bash
-systemctl --user disable --now glm53-exl3-k2.service
-rm -f "$HOME/.config/systemd/user/glm53-exl3-k2.service"
-systemctl --user daemon-reload
-```
-
-Cleanup intentionally leaves the model, runtime venv, and pinned upstream source tree in place.
+Both result sets are bounded operational sweeps on one GB10. They apply to their exact artifacts, runtimes, settings, contexts, and included workloads.
 
 ## License and attribution
 
-The scripts and notes authored here are MIT licensed. The model weights are not redistributed and retain their own license. The pinned upstream runtime recipe is separately MIT licensed. See [`NOTICE.md`](NOTICE.md) for the exact dependency boundary.
+Repository scripts and notes are MIT licensed. Model weights are not redistributed and retain their upstream terms. llama.cpp, vLLM, ExLlamaV3, FlashInfer, Unsloth, the EXL3 upstream recipe, and their transitive dependencies retain their own licenses. See [`NOTICE.md`](NOTICE.md).

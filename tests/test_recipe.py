@@ -6,6 +6,8 @@ ROOT = Path(__file__).resolve().parents[1]
 MODEL_REVISION = "ca0bcdae265f7df1e346c57a2b53b8b8f632ee0b"
 UPSTREAM_COMMIT = "0b8dd0d6c7b186076f2e61d1b99a6289f8006c3c"
 VLLM_COMMIT = "878631b6079d2cf9fb80830ef9cb41b43aded098"
+GGUF_REVISION = "2975ab414d30340466d8c51533c6e91f0cca64c1"
+LLAMACPP_COMMIT = "629b50552801912b3e2078f9799e4d77213197d7"
 
 manifest = json.loads((ROOT / "manifests/glm53-exl3-k2.json").read_text())
 assert manifest["repository"] == "vcruz305/GLM-5.3-Flash-EXL3-K2"
@@ -43,19 +45,39 @@ assert benchmark["safety"]["maximum_service_swap_bytes"] == 0
 assert benchmark["safety"]["breach"] is None
 assert all(row["output_tokens"] == 400 for row in benchmark["cases"])
 
+gguf = json.loads((ROOT / "gguf/results/summary.json").read_text())
+assert gguf["artifact"]["revision"] == GGUF_REVISION
+assert gguf["runtime"]["commit"] == LLAMACPP_COMMIT
+assert gguf["protocol"]["workloads"] == 4
+assert gguf["protocol"]["generated_tokens_per_request"] == 400
+assert gguf["arms"]["no-mtp"]["mean_server_decode_tokens_per_second"] == 18.40163204148179
+assert gguf["arms"]["mtp-n2"]["mean_server_decode_tokens_per_second"] == 27.66900143012806
+assert gguf["comparison"]["mean_server_decode_ratio"] == 1.5036167100698106
+assert gguf["arms"]["mtp-n2"]["acceptance"]["accepted_draft_tokens"] == 1865
+assert gguf["arms"]["mtp-n2"]["acceptance"]["proposed_draft_tokens"] == 2650
+assert gguf["arms"]["mtp-n2"]["maximum_service_swap_bytes"] == 0
+
 readme = (ROOT / "README.md").read_text()
 bootstrap = (ROOT / "scripts/bootstrap_runtime.sh").read_text()
 launcher = (ROOT / "scripts/run_server.sh").read_text()
 service = (ROOT / "systemd/glm53-exl3-k2.service").read_text()
-for value in (MODEL_REVISION, UPSTREAM_COMMIT, VLLM_COMMIT, "97,728,721,536", "SM121"):
+for value in (MODEL_REVISION, UPSTREAM_COMMIT, VLLM_COMMIT, GGUF_REVISION, LLAMACPP_COMMIT, "97,728,721,536", "SM121"):
     assert value in readme or value in bootstrap
 for value in ("15.9612", "66.11%", "13.2363", "20.2586", "16.9598", "14.9849", "No matched no-spec speedup is claimed"):
+    assert value in readme
+for value in ("18.40", "27.67", "1.50x", "+50.36%", "70.38%", "103,008,962,080"):
     assert value in readme
 for value in ("127.0.0.1", "MAX_MODEL_LEN", "65536", "SPEC_METHOD", "MTP_TOKENS", "GPU_MEM_UTIL", "0.87", "EXL3_FUSED_MOE"):
     assert value in launcher
 assert "MemorySwapMax=0" in service
 assert "MemoryHigh=108G" in service
 assert "MemoryMax=112G" in service
+
+public_narrative = "\n".join(
+    (ROOT / path).read_text()
+    for path in ("README.md", "gguf/README.md", "gguf/REPORT.md", "gguf/CARD_VALUES.md")
+)
+assert "quality" not in public_narrative.lower()
 
 all_public_text = "\n".join(
     path.read_text(errors="replace")

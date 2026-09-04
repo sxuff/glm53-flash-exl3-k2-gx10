@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "study": "glm53-flash-iq2xxs-native-mtp-gb10",
+  "hardware": {
+    "accelerator": "NVIDIA GB10",
+    "systems": 1,
+    "unified_memory_bytes": 128000000000
+  },
+  "artifact": {
+    "repository": "unsloth/GLM-5.3-Flash-GGUF",
+    "revision": "2975ab414d30340466d8c51533c6e91f0cca64c1",
+    "variant": "UD-IQ2_XXS",
+    "files": 5,
+    "bytes": 103008962080
+  },
+  "runtime": {
+    "repository": "unslothai/llama.cpp",
+    "commit": "629b50552801912b3e2078f9799e4d77213197d7",
+    "context_tokens": 8192,
+    "parallel_slots": 1,
+    "flash_attention": true
+  },
+  "protocol": {
+    "workloads": 4,
+    "warmups_per_workload_per_arm": 1,
+    "measured_requests_per_workload_per_arm": 1,
+    "generated_tokens_per_request": 400,
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "seed": 42,
+    "ignore_eos": true,
+    "order": [
+      "prose",
+      "structured",
+      "code",
+      "math"
+    ]
+  },
+  "arms": {
+    "no-mtp": {
+      "mean_server_decode_tokens_per_second": 18.40163204148179,
+      "aggregate_whole_request_tokens_per_second": 18.17114927110314,
+      "summed_wall_seconds": 88.0516678460408,
+      "measured_completion_tokens": 1600,
+      "minimum_mem_available_bytes": 18300747776,
+      "maximum_host_swap_growth_bytes": 0,
+      "maximum_service_swap_bytes": 0,
+      "per_workload_server_decode_tokens_per_second": {
+        "prose": 18.53051871937675,
+        "structured": 18.459015480313298,
+        "code": 18.437660997401675,
+        "math": 18.17933296883543
+      }
+    },
+    "mtp-n2": {
+      "mean_server_decode_tokens_per_second": 27.66900143012806,
+      "aggregate_whole_request_tokens_per_second": 26.56289819925656,
+      "summed_wall_seconds": 60.23439114203211,
+      "measured_completion_tokens": 1600,
+      "minimum_mem_available_bytes": 14842114048,
+      "maximum_host_swap_growth_bytes": 0,
+      "maximum_service_swap_bytes": 0,
+      "per_workload_server_decode_tokens_per_second": {
+        "prose": 21.977679380689928,
+        "structured": 33.04796128866177,
+        "code": 27.38789496227472,
+        "math": 28.262470088885824
+      },
+      "acceptance": {
+        "scope": "four warm-ups plus four measured requests",
+        "proposed_draft_tokens": 2650,
+        "accepted_draft_tokens": 1865,
+        "rate": 0.7037735849056603,
+        "position_1": {
+          "proposed": 1325,
+          "accepted": 1062,
+          "rate": 0.8015094339622642
+        },
+        "position_2": {
+          "proposed": 1325,
+          "accepted": 803,
+          "rate": 0.6060377358490566
+        }
+      }
+    }
+  },
+  "comparison": {
+    "mean_server_decode_ratio": 1.5036167100698106,
+    "mean_server_decode_increase_percent": 50.361671006981055,
+    "aggregate_whole_request_ratio": 1.4618171807932085
+  },
+  "metric_definitions": {
+    "mean_server_decode_tokens_per_second": "arithmetic mean of llama.cpp predicted_per_second across four measured requests",
+    "aggregate_whole_request_tokens_per_second": "total completion tokens divided by summed client-observed wall seconds"
+  }
+}

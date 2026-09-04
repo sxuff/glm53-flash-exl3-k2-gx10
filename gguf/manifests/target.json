@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "repository": "unsloth/GLM-5.3-Flash-GGUF",
+  "revision": "2975ab414d30340466d8c51533c6e91f0cca64c1",
+  "variant": "UD-IQ2_XXS",
+  "files": [
+    {
+      "source_path": "Shard_Rewrite/GLM-5.3-Flash-UD-IQ2_XXS-00001-of-00004.gguf_file",
+      "final_name": "GLM-5.3-Flash-UD-IQ2_XXS-00001-of-00004.gguf",
+      "bytes": 9429984,
+      "sha256": "337870cefce5fb34b2aa3ade54a0fbf61676697f7f9a906670c20edde74561f4",
+      "xet_hash": "38eaea8f16dcea532d5444c89a4756e991bb14d45a18ab476133609e3dbd9a34"
+    },
+    {
+      "source_path": "UD-IQ2_XXS/GLM-5.3-Flash-UD-IQ2_XXS-00002-of-00004.gguf",
+      "final_name": "GLM-5.3-Flash-UD-IQ2_XXS-00002-of-00004.gguf",
+      "bytes": 49896298080,
+      "sha256": "d51a3d9ca05022d53e71753df75ee64ed5fd4e47655650ae023e9717b3ec158d",
+      "xet_hash": "b63ec08084fadfa005c12587212d7b230a2dadc34cb5643689c1cdd76caa15b6"
+    },
+    {
+      "source_path": "UD-IQ2_XXS/GLM-5.3-Flash-UD-IQ2_XXS-00003-of-00004.gguf",
+      "final_name": "GLM-5.3-Flash-UD-IQ2_XXS-00003-of-00004.gguf",
+      "bytes": 49248507840,
+      "sha256": "89180f13784dc1128586b98adf1ca876279881a20bc4f01747703ce352563372",
+      "xet_hash": "7c9f6672f34985decd3a1108a14e3bf517db23ac8eb559e156c8a74d62c3a245"
+    },
+    {
+      "source_path": "UD-IQ2_XXS/GLM-5.3-Flash-UD-IQ2_XXS-00004-of-00004.gguf",
+      "final_name": "GLM-5.3-Flash-UD-IQ2_XXS-00004-of-00004.gguf",
+      "bytes": 2690716000,
+      "sha256": "9e0ef47daa1fdffce3cf2ac1594ce4634d176ad018be6e692729757f38d5fbf6",
+      "xet_hash": "68475eb81d197aa298c7af053eaee4d987f316937bdad12dd3efe3478e59ba21"
+    },
+    {
+      "source_path": "Shard_Rewrite/mmproj-BF16.gguf_file",
+      "final_name": "mmproj-BF16.gguf",
+      "bytes": 1164010176,
+      "sha256": "89179135a443d332a1c62e116a0ebb377e1346f3ab9228a27da53bae327a157a",
+      "xet_hash": "7f1e6d0315cf4329eadcdaab57a743a247b22d4330b07f17e7d786075767b442"
+    }
+  ]
+}

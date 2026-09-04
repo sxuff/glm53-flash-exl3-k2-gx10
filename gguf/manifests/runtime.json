@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/unslothai/llama.cpp.git",
+  "commit": "629b50552801912b3e2078f9799e4d77213197d7",
+  "patch": "patches/gguf-canonical-naming.patch",
+  "patch_sha256": "f27653c7cfb08f4591831b27e6fb3ce19c5279c60683c47405a0c829985e881f",
+  "build": {
+    "generator": "cmake",
+    "type": "Release",
+    "cuda": true,
+    "cuda_architectures": "121",
+    "targets": [
+      "llama-server",
+      "llama-bench"
+    ]
+  },
+  "measured_launch": {
+    "context_tokens": 8192,
+    "parallel_slots": 1,
+    "flash_attention": true,
+    "gpu_layers": "all",
+    "mtp": {
+      "spec_type": "draft-mtp",
+      "spec_draft_n_max": 2,
+      "spec_draft_n_min": 0
+    }
+  }
+}

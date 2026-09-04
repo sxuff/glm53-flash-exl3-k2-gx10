@@ -1,0 +1,26 @@
+diff --git a/src/llama-arch.cpp b/src/llama-arch.cpp
+index 823f70a..847646d 100644
+--- a/src/llama-arch.cpp
++++ b/src/llama-arch.cpp
+@@ -84,7 +84,7 @@ static const std::map<llm_arch, const char *> LLM_ARCH_NAMES = {
+     { LLM_ARCH_GLM4,             "glm4"             },
+     { LLM_ARCH_GLM4_MOE,         "glm4moe"          },
+     { LLM_ARCH_GLM_DSA,          "glm-dsa"          },
+-    { LLM_ARCH_GLM5NEXT,         "glm5next"         },
++    { LLM_ARCH_GLM5NEXT,         "glm5-next"        },
+     { LLM_ARCH_BITNET,           "bitnet"           },
+     { LLM_ARCH_T5,               "t5"               },
+     { LLM_ARCH_T5ENCODER,        "t5encoder"        },
+diff --git a/tools/mtmd/clip-impl.h b/tools/mtmd/clip-impl.h
+index 0c7b23d..c6e1d2f 100644
+--- a/tools/mtmd/clip-impl.h
++++ b/tools/mtmd/clip-impl.h
+@@ -553,7 +553,7 @@ static std::map<projector_type, std::string> PROJECTOR_TYPE_NAMES = {
+     { PROJECTOR_TYPE_DEEPSEEK4V,        "deepseek4v"},
+     { PROJECTOR_TYPE_LFM2A,             "lfm2a"},
+     { PROJECTOR_TYPE_GLM4V,             "glm4v"},
+-    { PROJECTOR_TYPE_GLM5NEXT,          "glm5next"},
++    { PROJECTOR_TYPE_GLM5NEXT,          "glm5v"},
+     { PROJECTOR_TYPE_YOUTUVL,           "youtuvl"},
+     { PROJECTOR_TYPE_YASA2,             "yasa2"},
+     { PROJECTOR_TYPE_KIMIK25,           "kimik25"},

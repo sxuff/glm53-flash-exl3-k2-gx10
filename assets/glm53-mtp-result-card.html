@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GLM-5.3 Flash native MTP result</title>
+<style>
+  :root {
+    --bg: #f6f6f3;
+    --card: #fbfbf9;
+    --ink: #151517;
+    --muted: #68686f;
+    --line: #d9d9d4;
+    --soft: #efefec;
+    --accent: #6d5bd0;
+    --accent-bg: #eeeafd;
+    --accent-line: #c9c0f3;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1600px; height: 836px; overflow: hidden; background: var(--bg); }
+  body { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); }
+  main { width: 1600px; height: 836px; padding: 44px 54px; }
+  .frame { width: 100%; height: 100%; border: 1px solid #d2d2cd; border-radius: 26px; background: var(--card); padding: 34px 38px 26px; box-shadow: 0 2px 16px rgba(18,18,20,.04); }
+  h1 { margin: 0; font-size: 34px; line-height: 1.08; letter-spacing: -.032em; font-weight: 760; }
+  .subtitle { margin-top: 10px; font-size: 17px; line-height: 1.35; color: var(--muted); letter-spacing: -.006em; }
+  .hero { display: grid; grid-template-columns: 1fr 82px 1fr; gap: 16px; align-items: stretch; margin-top: 25px; }
+  .metric { min-height: 164px; border-radius: 18px; border: 1px solid var(--line); background: var(--soft); padding: 22px 26px; }
+  .metric.accent { background: var(--accent-bg); border-color: var(--accent-line); }
+  .label { font-size: 17px; font-weight: 700; letter-spacing: -.01em; color: #4f4f57; }
+  .metric.accent .label { color: #4f3da8; }
+  .number { margin-top: 6px; font-size: 72px; line-height: .95; font-weight: 790; letter-spacing: -.055em; }
+  .unit { margin-top: 10px; font-size: 17px; color: var(--muted); }
+  .metric.accent .unit { color: #5545a7; font-weight: 650; }
+  .arrow { display: grid; place-items: center; font-size: 48px; color: #9b9ba0; }
+  .proofs { display: grid; grid-template-columns: 1.12fr .9fr .8fr; gap: 14px; margin-top: 16px; }
+  .proof { min-height: 112px; border: 1px solid var(--line); border-radius: 15px; padding: 17px 20px; background: #fff; }
+  .proof-label { color: var(--muted); font-size: 15px; font-weight: 650; }
+  .proof-value { margin-top: 5px; font-size: 31px; line-height: 1; font-weight: 760; letter-spacing: -.035em; }
+  .proof-note { margin-top: 6px; color: var(--muted); font-size: 14px; }
+  .rows { margin-top: 18px; border-top: 1px solid var(--line); }
+  .row { min-height: 45px; display: grid; grid-template-columns: 190px 1fr; align-items: center; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .row-key { color: var(--muted); font-weight: 650; }
+  .row-value { font-weight: 590; }
+  .note { margin-top: 15px; color: #515159; font-size: 13px; line-height: 1.43; max-width: 1370px; }
+  .footer { margin-top: 11px; color: #77777d; font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+</style>
+</head>
+<body>
+<main>
+  <section class="frame">
+    <h1>GLM-5.3-Flash UD-IQ2_XXS · native MTP n=2</h1>
+    <div class="subtitle">NVIDIA GB10, 128 GB unified · llama.cpp · single 8K slot · temperature 0, seed 42 · 4 matched requests per arm</div>
+
+    <div class="hero">
+      <div class="metric">
+        <div class="label">No MTP</div>
+        <div class="number">18.4</div>
+        <div class="unit">tok/s · mean server decode</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="metric accent">
+        <div class="label">Native MTP n=2</div>
+        <div class="number">27.7</div>
+        <div class="unit">tok/s · 1.50× · +50.4%</div>
+      </div>
+    </div>
+
+    <div class="proofs">
+      <div class="proof">
+        <div class="proof-label">Independently reproduced</div>
+        <div class="proof-value">1.502×</div>
+        <div class="proof-note">fresh rerun: 18.25 → 27.41 tok/s</div>
+      </div>
+      <div class="proof">
+        <div class="proof-label">Requests completed</div>
+        <div class="proof-value">4 / 4</div>
+        <div class="proof-note">both arms · matched payloads 4/4</div>
+      </div>
+      <div class="proof">
+        <div class="proof-label">Swap, both arms</div>
+        <div class="proof-value">0 B</div>
+        <div class="proof-note">service and host growth</div>
+      </div>
+    </div>
+
+    <div class="rows">
+      <div class="row"><div class="row-key">Draft source</div><div class="row-value">native MTP head in checkpoint, no extra draft model</div></div>
+      <div class="row"><div class="row-key">Artifact</div><div class="row-value">95.93 GiB including projector · 5/5 files SHA-256 verified</div></div>
+      <div class="row"><div class="row-key">Runtime</div><div class="row-value">unslothai/llama.cpp · commit 629b505 · Flash Attention · full GPU offload</div></div>
+      <div class="row"><div class="row-key">Serving now</div><div class="row-value">MTP n=2 active on one GX10 · SSE streaming verified · service swap 0 B</div></div>
+    </div>
+
+    <div class="note">Headline pair is the original measured receipt, 18.40 → 27.67 tok/s. A fresh end-to-end run of the corrected public pipeline reproduced the speedup at 1.502×. Both arms used the same artifact, runtime, prompts, sampler, context, and generation length. Only speculative decoding changed.</div>
+    <div class="footer">github.com/sxuff/glm53-flash-exl3-k2-gx10 · gguf/results/summary.json</div>
+  </section>
+</main>
+</body>
+</html>
