@@ -30,10 +30,10 @@ Per-workload values and card copy are in [`gguf/CARD_VALUES.md`](gguf/CARD_VALUE
 
 ## Pick a lane
 
-| Lane | Artifact | Runtime | Exercised context | Measured profile |
-|---|---|---|---:|---|
-| GGUF | Unsloth UD-IQ2_XXS, 95.93 GiB including projector | llama.cpp | 8,192 | Native MTP n=2, 27.67 tok/s mean decode |
-| EXL3 | vcruz305 EXL3 K2, 91.017 GiB | vLLM + ExLlamaV3 | 65,536 | Native MTP k=2, 15.9612 tok/s aggregate decode |
+| Lane | Artifact | Runtime | Measured profile |
+|---|---|---|---|
+| GGUF | Unsloth UD-IQ2_XXS, 95.93 GiB including projector | llama.cpp | Native MTP n=2, 27.67 tok/s mean decode |
+| EXL3 | vcruz305 EXL3 K2, 91.017 GiB | vLLM + ExLlamaV3 | Native MTP k=2, 15.9612 tok/s aggregate decode |
 
 These are separate operational lanes, not a controlled artifact-to-artifact speed comparison. Their quantization, runtime, context allocation, and memory profiles differ.
 
